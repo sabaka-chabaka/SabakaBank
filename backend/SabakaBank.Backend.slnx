@@ -1,2 +1,6 @@
 <Solution>
+  <Project Path="SabakaBank.Backend.API/SabakaBank.Backend.API.csproj" />
+  <Project Path="SabakaBank.Backend.Application/SabakaBank.Backend.Application.csproj" />
+  <Project Path="SabakaBank.Backend.Domain/SabakaBank.Backend.Domain.csproj" />
+  <Project Path="SabakaBank.Backend.Infrastructure/SabakaBank.Backend.Infrastructure.csproj" />
 </Solution>
