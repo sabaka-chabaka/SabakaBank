@@ -17,6 +17,25 @@ services:
       timeout: 5s
       retries: 10
 
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.api
+    container_name: sabakabank-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=sabakabank;Username=postgres;Password=${DB_PASSWORD}"
+      Jwt__Secret: "${JWT_SECRET}"
+      Jwt__Issuer: "SabakaBank"
+      Jwt__Audience: "SabakaBank"
+      Jwt__ExpiryMinutes: "60"
+      Cors__Origin: "http://localhost:5173"
+      ASPNETCORE_ENVIRONMENT: "Production"
+    ports:
+      - "5000:5000"
 
   front:
     build:

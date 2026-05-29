@@ -1,0 +1,28 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+COPY backend/SabakaBank.Domain/SabakaBank.Domain.csproj             SabakaBank.Domain/
+COPY backend/SabakaBank.Infrastructure/SabakaBank.Infrastructure.csproj SabakaBank.Infrastructure/
+COPY backend/SabakaBank.Application/SabakaBank.Application.csproj   SabakaBank.Application/
+COPY backend/SabakaBank.API/SabakaBank.API.csproj                   SabakaBank.API/
+
+RUN dotnet restore SabakaBank.API/SabakaBank.API.csproj
+
+COPY backend/ .
+
+RUN dotnet publish SabakaBank.API/SabakaBank.API.csproj \
+    -c Release -o /app/publish --no-restore
+
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+WORKDIR /app
+
+RUN apt-get update && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /app/publish .
+
+ENV ASPNETCORE_URLS=http://+:5000
+ENV ASPNETCORE_ENVIRONMENT=Production
+
+EXPOSE 5000
+
+ENTRYPOINT ["dotnet", "SabakaBank.API.dll"]
