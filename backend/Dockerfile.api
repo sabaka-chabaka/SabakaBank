@@ -1,16 +1,16 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-COPY backend/SabakaBank.Domain/SabakaBank.Domain.csproj             SabakaBank.Domain/
-COPY backend/SabakaBank.Infrastructure/SabakaBank.Infrastructure.csproj SabakaBank.Infrastructure/
-COPY backend/SabakaBank.Application/SabakaBank.Application.csproj   SabakaBank.Application/
-COPY backend/SabakaBank.API/SabakaBank.API.csproj                   SabakaBank.API/
+COPY backend/SabakaBank.Backend.Domain/SabakaBank.Backend.Domain.csproj             SabakaBank.Backend.Domain/
+COPY backend/SabakaBank.Backend.Infrastructure/SabakaBank.Backend.Infrastructure.csproj SabakaBank.Backend.Infrastructure/
+COPY backend/SabakaBank.Backend.Application/SabakaBank.Backend.Application.csproj   SabakaBank.Backend.Application/
+COPY backend/SabakaBank.Backend.API/SabakaBank.Backend.API.csproj                   SabakaBank.Backend.API/
 
-RUN dotnet restore SabakaBank.API/SabakaBank.API.csproj
+RUN dotnet restore SabakaBank.Backend.API/SabakaBank.Backend.API.csproj
 
 COPY backend/ .
 
-RUN dotnet publish SabakaBank.API/SabakaBank.API.csproj \
+RUN dotnet publish SabakaBank.Backend.API/SabakaBank.Backend.API.csproj \
     -c Release -o /app/publish --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
@@ -25,4 +25,4 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 
 EXPOSE 5000
 
-ENTRYPOINT ["dotnet", "SabakaBank.API.dll"]
+ENTRYPOINT ["dotnet", "SabakaBank.Backend.API.dll"]
