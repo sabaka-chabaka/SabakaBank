@@ -11,6 +11,9 @@ public class User : BaseEntity
     public string LastName     { get; private set; }
     public bool   IsActive     { get; private set; }
 
+    private readonly List<Account> _accounts = [];
+    public IReadOnlyCollection<Account> Accounts => _accounts.AsReadOnly();
+
     private User() { }
 
     public User(string username, string email, string passwordHash, string firstName, string lastName)
