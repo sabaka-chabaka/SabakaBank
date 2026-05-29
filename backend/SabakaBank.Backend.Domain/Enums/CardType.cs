@@ -1,0 +1,7 @@
+namespace SabakaBank.Backend.Domain.Enums;
+
+public enum CardType
+{
+    Debit  = 0,
+    Credit = 1
+}
