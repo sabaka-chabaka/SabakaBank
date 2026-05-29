@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sabakabank-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: sabakabank
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d sabakabank"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+
+  front:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile.front
+    container_name: sabakabank-frontend
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      - VITE_API_URL=http://api:5000
+    ports:
+      - "5173:5173"
+
+volumes:
+  postgres_data:
