@@ -7,7 +7,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.6"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.6" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Scalar.AspNetCore" Version="2.5.13" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SabakaBank.Backend.Application\SabakaBank.Backend.Application.csproj" />
+        <ProjectReference Include="..\SabakaBank.Backend.Infrastructure\SabakaBank.Backend.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
