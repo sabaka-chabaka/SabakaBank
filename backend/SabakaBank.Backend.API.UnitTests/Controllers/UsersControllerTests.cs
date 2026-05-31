@@ -6,17 +6,19 @@ namespace SabakaBank.Backend.API.UnitTests.Controllers;
 
 public class UsersControllerTests : IClassFixture<SabakaWebApplicationFactory>
 {
-    private readonly HttpClient _client;
+    private readonly SabakaWebApplicationFactory _factory;
 
     public UsersControllerTests(SabakaWebApplicationFactory factory)
     {
-        _client = factory.CreateClient();
+        _factory = factory;
     }
 
     [Fact]
     public async Task Register_Returns201_WhenValid()
     {
-        var resp = await _client.PostAsJsonAsync("/api/users/register", new
+        var client = _factory.CreateClient();
+
+        var resp = await client.PostAsJsonAsync("/api/users/register", new
         {
             Username = "newuser", Email = "new@bank.com", Password = "pass123",
             FirstName = "New", LastName = "User"
@@ -28,13 +30,14 @@ public class UsersControllerTests : IClassFixture<SabakaWebApplicationFactory>
     [Fact]
     public async Task Register_Returns409_WhenEmailTaken()
     {
-        await _client.PostAsJsonAsync("/api/users/register", new
+        var client = _factory.CreateClient();
+        await client.PostAsJsonAsync("/api/users/register", new
         {
             Username = "first", Email = "taken@bank.com", Password = "pass",
             FirstName = "A", LastName = "B"
         });
 
-        var resp = await _client.PostAsJsonAsync("/api/users/register", new
+        var resp = await client.PostAsJsonAsync("/api/users/register", new
         {
             Username = "second", Email = "taken@bank.com", Password = "pass",
             FirstName = "C", LastName = "D"
@@ -46,13 +49,14 @@ public class UsersControllerTests : IClassFixture<SabakaWebApplicationFactory>
     [Fact]
     public async Task Register_Returns409_WhenUsernameTaken()
     {
-        await _client.PostAsJsonAsync("/api/users/register", new
+        var client = _factory.CreateClient();
+        await client.PostAsJsonAsync("/api/users/register", new
         {
             Username = "sameuser", Email = "email1@bank.com", Password = "pass",
             FirstName = "A", LastName = "B"
         });
 
-        var resp = await _client.PostAsJsonAsync("/api/users/register", new
+        var resp = await client.PostAsJsonAsync("/api/users/register", new
         {
             Username = "sameuser", Email = "email2@bank.com", Password = "pass",
             FirstName = "C", LastName = "D"
@@ -64,10 +68,11 @@ public class UsersControllerTests : IClassFixture<SabakaWebApplicationFactory>
     [Fact]
     public async Task GetMe_Returns200_WhenAuthenticated()
     {
-        var token = await AuthHelper.RegisterAndLoginAsync(_client, "meuser", "me@bank.com");
-        AuthHelper.SetBearer(_client, token);
+        var client = _factory.CreateClient();
+        var token  = await AuthHelper.RegisterAndLoginAsync(client, "meuser", "me@bank.com");
+        AuthHelper.SetBearer(client, token);
 
-        var resp = await _client.GetAsync("/api/users/me");
+        var resp = await client.GetAsync("/api/users/me");
 
         Assert.Equal(HttpStatusCode.OK, resp.StatusCode);
     }
@@ -75,7 +80,7 @@ public class UsersControllerTests : IClassFixture<SabakaWebApplicationFactory>
     [Fact]
     public async Task GetMe_Returns401_WhenUnauthenticated()
     {
-        var client = new HttpClient { BaseAddress = _client.BaseAddress };
+        var client = _factory.CreateClient();
 
         var resp = await client.GetAsync("/api/users/me");
 
@@ -85,10 +90,11 @@ public class UsersControllerTests : IClassFixture<SabakaWebApplicationFactory>
     [Fact]
     public async Task ChangePassword_Returns204_WhenValid()
     {
-        var token = await AuthHelper.RegisterAndLoginAsync(_client, "chpass", "chpass@bank.com", "oldpass");
-        AuthHelper.SetBearer(_client, token);
+        var client = _factory.CreateClient();
+        var token  = await AuthHelper.RegisterAndLoginAsync(client, "chpass", "chpass@bank.com", "oldpass");
+        AuthHelper.SetBearer(client, token);
 
-        var resp = await _client.PutAsJsonAsync("/api/users/me/password", new
+        var resp = await client.PutAsJsonAsync("/api/users/me/password", new
         {
             CurrentPassword = "oldpass",
             NewPassword     = "newpass"
@@ -100,10 +106,11 @@ public class UsersControllerTests : IClassFixture<SabakaWebApplicationFactory>
     [Fact]
     public async Task ChangePassword_Returns403_WhenWrongCurrent()
     {
-        var token = await AuthHelper.RegisterAndLoginAsync(_client, "chpasswrong", "chpasswrong@bank.com", "correct");
-        AuthHelper.SetBearer(_client, token);
+        var client = _factory.CreateClient();
+        var token  = await AuthHelper.RegisterAndLoginAsync(client, "chpasswrong", "chpasswrong@bank.com", "correct");
+        AuthHelper.SetBearer(client, token);
 
-        var resp = await _client.PutAsJsonAsync("/api/users/me/password", new
+        var resp = await client.PutAsJsonAsync("/api/users/me/password", new
         {
             CurrentPassword = "wrong",
             NewPassword     = "new"

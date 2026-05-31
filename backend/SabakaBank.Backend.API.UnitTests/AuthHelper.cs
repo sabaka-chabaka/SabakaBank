@@ -12,7 +12,7 @@ internal static class AuthHelper
         string email = "sabaka@bank.com",
         string password = "password123")
     {
-        await client.PostAsJsonAsync("/api/users/register", new
+        var registerResp = await client.PostAsJsonAsync("/api/users/register", new
         {
             Username  = username,
             Email     = email,
@@ -21,18 +21,34 @@ internal static class AuthHelper
             LastName  = "Chabaka"
         });
 
+        if (!registerResp.IsSuccessStatusCode)
+        {
+            var err = await registerResp.Content.ReadAsStringAsync();
+            throw new InvalidOperationException($"Register failed ({registerResp.StatusCode}): {err}");
+        }
+
         var loginResp = await client.PostAsJsonAsync("/api/auth/login", new
         {
             Email    = email,
             Password = password
         });
 
-        var body  = await loginResp.Content.ReadAsStringAsync();
-        var doc   = JsonDocument.Parse(body);
-        return doc.RootElement.GetProperty("token").GetString()!;
+        if (!loginResp.IsSuccessStatusCode)
+        {
+            var err = await loginResp.Content.ReadAsStringAsync();
+            throw new InvalidOperationException($"Login failed ({loginResp.StatusCode}): {err}");
+        }
+
+        var body   = await loginResp.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<LoginResult>(body, JsonOptions)
+                     ?? throw new InvalidOperationException($"Login response deserialization failed. Body: {body}");
+
+        return result.Token;
     }
 
     public static void SetBearer(HttpClient client, string token) =>
         client.DefaultRequestHeaders.Authorization =
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+    private record LoginResult(Guid UserId, string Token);
 }
