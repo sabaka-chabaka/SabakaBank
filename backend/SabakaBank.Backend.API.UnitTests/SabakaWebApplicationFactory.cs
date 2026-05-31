@@ -13,27 +13,32 @@ public class SabakaWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.UseEnvironment("Test");
 
-        builder.ConfigureServices(services =>
-        {
-            var descriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
-            if (descriptor is not null)
-                services.Remove(descriptor);
-
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
-        });
-
         builder.ConfigureAppConfiguration((_, config) =>
         {
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["Jwt:Secret"]        = "test-secret-key-32chars-long-here",
+                ["Jwt:Secret"]        = "test-secret-key-32chars-long-here!",
                 ["Jwt:Issuer"]        = "SabakaBank",
                 ["Jwt:Audience"]      = "SabakaBank",
                 ["Jwt:ExpiryMinutes"] = "60",
                 ["Cors:Origin"]       = "http://localhost:5173"
             });
+        });
+
+        builder.ConfigureServices(services =>
+        {
+            var descriptors = services
+                .Where(d => d.ServiceType == typeof(DbContextOptions<AppDbContext>)
+                            || d.ServiceType == typeof(DbContextOptions)
+                            || d.ServiceType.FullName?.Contains("EntityFrameworkCore") == true
+                            && d.ServiceType.FullName.Contains("Npgsql"))
+                .ToList();
+
+            foreach (var d in descriptors)
+                services.Remove(d);
+
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
         });
     }
 }
