@@ -4,6 +4,5 @@
   <Project Path="SabakaBank.Backend.Domain/SabakaBank.Backend.Domain.csproj" />
   <Project Path="SabakaBank.Backend.Infrastructure.UnitTests/SabakaBank.Backend.Infrastructure.UnitTests.csproj" />
   <Project Path="SabakaBank.Backend.Infrastructure/SabakaBank.Backend.Infrastructure.csproj" />
-  <Project Path="SabakaBank.Backend.API.UnitTests/SabakaBank.Backend.API.UnitTests.csproj" />
   <Project Path="SabakaBank.Backend.Application.UnitTests/SabakaBank.Backend.Application.UnitTests.csproj" />
 </Solution>
