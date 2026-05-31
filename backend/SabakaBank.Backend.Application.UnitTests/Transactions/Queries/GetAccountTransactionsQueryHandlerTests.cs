@@ -3,6 +3,8 @@ using SabakaBank.Backend.Application.UnitTests;
 using SabakaBank.Backend.Application.Transactions.Queries.GetAccountTransactions;
 using SabakaBank.Backend.Domain.Entities;
 using SabakaBank.Backend.Domain.Enums;
+using SabakaBank.Backend.Domain.Repositories;
+using Xunit;
 
 namespace SabakaBank.Backend.Application.UnitTests.Transactions.Queries;
 

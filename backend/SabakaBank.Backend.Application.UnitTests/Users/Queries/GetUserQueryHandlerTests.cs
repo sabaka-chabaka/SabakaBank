@@ -1,6 +1,9 @@
 using Moq;
 using SabakaBank.Backend.Application.UnitTests;
 using SabakaBank.Backend.Application.Users.Queries.GetUser;
+using SabakaBank.Backend.Domain.Entities;
+using SabakaBank.Backend.Domain.Repositories;
+using Xunit;
 
 namespace SabakaBank.Backend.Application.UnitTests.Users.Queries;
 

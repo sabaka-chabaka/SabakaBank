@@ -2,6 +2,9 @@ using Moq;
 using SabakaBank.Backend.Application.Auth.Commands.Login;
 using SabakaBank.Backend.Application.Common.Interfaces;
 using SabakaBank.Backend.Application.UnitTests;
+using SabakaBank.Backend.Domain.Entities;
+using SabakaBank.Backend.Domain.Repositories;
+using Xunit;
 
 namespace SabakaBank.Backend.Application.UnitTests.Auth.Commands;
 
